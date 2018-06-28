@@ -1,0 +1,8 @@
+name: news-ds
+dependencies:
+    - python=3
+    - ipython
+    - lxml
+    - pip
+    - pip:
+        - redis
