@@ -57,23 +57,23 @@ SITE_CONFIGS = [
     {
         "name": "VNExpress",
         "id": "VNE",
-        "url_xpath": "//article[contains(@class, 'list_news')]/h3/a[1]/@href",
+        "url_xpath": "//article[contains(@class, 'list_news')]/h4/a[1]/@href",
         "content_xpath": "//article[contains(@class, 'content_detail')]/p//text()",
-        "next_page_pattern": "page/{}.html",
-        "page_regex": r"page/(\d+)\.html",
+        "next_page_pattern": "p{}",
+        "page_regex": r"p(\d+)",
         "categories": [
-            { "name": "Pháp luật", "id": "PL", "urls": ["https://vnexpress.net/tin-tuc/phap-luat"] },
-            { "name": "Kinh Doanh", "id": "KD", "urls": ["https://kinhdoanh.vnexpress.net/"] },
-            { "name": "Thể Thao", "id": "TT", "urls": ["https://thethao.vnexpress.net/"] },
-            { "name": "Công Nghệ", "id": "CN", "urls": ["https://sohoa.vnexpress.net/"] },
-            { "name": "Sức Khoẻ", "id": "SK", "urls": ["https://suckhoe.vnexpress.net/"] },
-            { "name": "Văn Hoá", "id": "VH", "urls": ["https://giaitri.vnexpress.net/tin-tuc/san-khau-my-thuat"] },
+            { "name": "Pháp luật", "id": "PL", "urls": ["https://vnexpress.net/phap-luat-"] },
+            { "name": "Kinh Doanh", "id": "KD", "urls": ["https://vnexpress.net/kinh-doanh/"]},
+            { "name": "Thể Thao", "id": "TT", "urls": ["https://vnexpress.net/the-thao/"] },
+            { "name": "Công Nghệ", "id": "CN", "urls": ["https://vnexpress.net/so-hoa/"] },
+            { "name": "Sức Khoẻ", "id": "SK", "urls": ["https://vnexpress.net/suc-khoe/"] },
+            { "name": "Văn Hoá", "id": "VH", "urls": ["https://vnexpress.net/giai-tri/"] },
         ]
     },
     {
         "name": "Vietnamnet",
         "id": "VNN",
-        "url_xpath": "//ul[contains(@class, 'ListArticle')]/li/a/@href",
+        "url_xpath": "//*[contains(@class, 'd-ib')]/h3/a/@href",
         "content_xpath": "//*[contains(@id, 'ArticleContent')]/p//text()",
         "next_page_pattern": "trang{}/index.html",
         "page_regex": r"trang(\d+)/index\.html",
@@ -149,7 +149,10 @@ def init_page_url(page_url, next_page_pattern):
         elif len(page_url.rsplit(".htm", 1)) > 1:
             page_url = page_url.rsplit(".htm", 1)[0] + "/"
 
-    page_url = urljoin(page_url, next_page_pattern.format(1))
+    if page_url[-1] == "-":
+        page_url = page_url + next_page_pattern.format(1)
+    else:
+        page_url = urljoin(page_url, next_page_pattern.format(1))
     return page_url
 
 
@@ -164,7 +167,7 @@ def get_next_page_url(current_url, page_regex, next_page_pattern):
         next_page = 2
 
     next_page_url = re.sub(page_regex, next_page_pattern.format(next_page), current_url)
-    
+
     print("Next page of {}: {}".format(current_url, next_page_url))
     return next_page_url
 
@@ -335,4 +338,3 @@ if __name__ == "__main__":
                 push_task(func, (f_result, ))
 
             del __future_callback[future]
-
